@@ -1,0 +1,17 @@
+Dart Hackathon Seattle 2012
+
+Dart -> JS in Chrome, Firefox, Safari, Internet Explorer (bugs in Opera)
+
+Looks like C and JS had a baby (Dart!)
+JSON is valid Dart syntax
+String interpolation with ${variable}
+Closures and nested functions
+Collections have forEach, map, filter
+Fat arrow syntax (=>)
+Imperative language with function
+solid lexical scoping
+
+classes, data types, encapsulation
+Javascript prototype syntax is busted and opaque
+Dart makes classes and types nice
+solid lexical scope, no more 'this.stuff'
