@@ -1,10 +1,7 @@
-three.dart/examples/canvas_geometry_cube/Canvas_Geometry_Cube.dart
-three.dart/examples/canvas_lines/Canvas_Lines.dart
-point.dart
-three.dart/examples/canvas_geometry_heirarchy/Canvas_Geometry_Heirarchy.dart
-three.dart/src/ThreeD.dart
-Controls.dart
-Log.dart
 hack.dart
-three.dart/examples/canvas_interactive_cubes/Canvas_Interactive_Cubes.dart
+Log.dart
+World.dart
+Player.dart
+Controls.dart
+point.dart
 maze.dart
