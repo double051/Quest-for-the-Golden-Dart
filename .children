@@ -1,8 +1,10 @@
+World.dart
 three.dart/examples/canvas_geometry_cube/Canvas_Geometry_Cube.dart
 three.dart/examples/canvas_lines/Canvas_Lines.dart
 point.dart
 three.dart/examples/canvas_geometry_heirarchy/Canvas_Geometry_Heirarchy.dart
 three.dart/src/ThreeD.dart
+Player.dart
 Controls.dart
 Log.dart
 hack.dart

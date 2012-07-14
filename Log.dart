@@ -8,5 +8,10 @@ class Log
   static debug(String message)
   {
     debugElement.innerHTML = message;
+    Log.console(message);
+  }
+  static console(String message)
+  {
+    print(message);
   }
 }
