@@ -1,0 +1,16 @@
+body
+{
+  background-color: #000000;
+  font-family: monospace;
+  color: #ffffff;
+  margin: 8px;
+}
+
+a:link
+{
+  color:#7f7fff;
+}
+a:visited
+{
+  color:#7f00ff;
+}
