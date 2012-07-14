@@ -1,5 +1,6 @@
 #import('dart:html');
 #import('Log.dart');
+#import('Controls.dart');
 
 class Renderer
 {
@@ -32,6 +33,9 @@ void main()
   // set debug element
   Log.debugElement = document.query('#debugElement');
   Log.debug('Initialized debug text!');
+  
+  // initialize controls
+  Controls controls = new Controls();
   
   // initialize renderer
   Renderer renderer = new Renderer('#gameCanvas');
