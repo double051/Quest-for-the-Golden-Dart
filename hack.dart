@@ -1,13 +1,5 @@
 #import('dart:html');
-
-class Log
-{
-  static Element debugElement;
-  static debug(String message)
-  {
-    debugElement.innerHTML = message;
-  }
-}
+#import('Log.dart');
 
 class Renderer
 {
