@@ -1,3 +1,5 @@
+#library("maze");
+
 #import('dart:core');
 #import('./point.dart');
 

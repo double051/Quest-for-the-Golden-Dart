@@ -1,3 +1,4 @@
+#library("point");
 
 class point {
   int x, y;
