@@ -52,7 +52,7 @@ class World
     // renderer
     renderer = new CanvasRenderer();
     // renderer.setSize(containerWidth, containerHeight);
-    renderer.setSize(400, 400);
+    renderer.setSize(800, 800);
     renderer.setClearColor(new Color(0xffffff), 1);
     container.nodes.add(renderer.domElement);
     
@@ -63,17 +63,17 @@ class World
     // scene
     scene = new Scene();
     scene.add(camera);
-    camera.position.setValues(0, 0, 10);
+    camera.position.setValues(1, 0, 1);
     // camera
     // camera.lookAt(origin); // WARNING BROKEN!!!
     
     wallMeshes = new List<Mesh>();
     
-    // player
-    player = new Player(camera.position, camera.rotation);
-    
     // maze
     maze = new Maze(31, 31);
+    
+    // player
+    player = new Player(camera.position, camera.rotation, maze);
     
     initGeometry();
   }

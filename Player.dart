@@ -5,6 +5,8 @@
 #import("dart:json");
 #import("dart:core");
 #import("Log.dart");
+#import("Maze.dart");
+#import("Point.dart");
 
 class Player
 {
@@ -25,6 +27,8 @@ class Player
   Vector3 rotation;
   Controls controls;
   
+  Maze maze;
+  
   // animation
   int timeLast;
   
@@ -43,18 +47,22 @@ class Player
   Vector3 moveStartPosition;
   Vector3 moveEndPosition;
   Vector3 moveDeltaVector;
+  Vector3 facingDirection;
   
-  Player(Vector3 position, Vector3 rotation)
+  Player(Vector3 position, Vector3 rotation, Maze maze)
   {
     this.direction = NORTH;
     
     this.position = position;
     this.rotation = rotation;
     
+    this.maze = maze;
+    
     this.isMoving = false;
     this.moveStartPosition = new Vector3(0, 0, 0);
     this.moveEndPosition = new Vector3(0, 0, 0);
     this.moveDeltaVector = new Vector3(0, 0, 0);
+    this.facingDirection = new Vector3(0, 0, -1);
     
     this.isTurning = false;
     this.turnEndRotation = new Vector3(0, 0, 0);
@@ -71,6 +79,27 @@ class Player
     Log.debug("player rotation = ${rotation.x}, ${rotation.y}, ${rotation.z}");
   }
   
+  void updateFacingDirection()
+  {
+    switch(direction)
+    {
+      case NORTH:
+        facingDirection.setValues(0, 0, -1);
+        break;
+      case SOUTH:
+        facingDirection.setValues(0, 0, 1);
+        break;
+      case EAST:
+        facingDirection.setValues(1, 0, 0);
+        break;
+      case WEST:
+        facingDirection.setValues(-1, 0, 0);
+        break;
+      default:
+        break;
+    }
+  }
+  
   void startTurning()
   {
     isTurning = true;
@@ -84,14 +113,18 @@ class Player
   {
     startTurning();
     direction = (direction + 1)%4;
-    turnEndRotation.y += turnRotation;
+    turnEndRotation.y -= turnRotation;
+    updateFacingDirection();
+    // facingDirection = _get90Left(_get90Left(_get90Left(facingDirection)));
   }
   
   void turnLeft()
   {
     startTurning();
     direction = (direction - 1)%4;
-    turnEndRotation.y -= turnRotation;
+    turnEndRotation.y += turnRotation;
+    updateFacingDirection();
+    // facingDirection = _get90Left(facingDirection);
   }
   
   void startMoving()
@@ -112,6 +145,7 @@ class Player
         // stop moving
         isMoving = false;
         position.copy(moveEndPosition);
+        Log.debug("facingDirection = ${facingDirection.x}, ${facingDirection.y}, ${facingDirection.z}");
       }
       else if (time > moveTimeStart)
       {
@@ -131,6 +165,7 @@ class Player
       {
         isTurning = false;
         rotation.copy(turnEndRotation);
+        Log.debug("facingDirection = ${facingDirection.x}, ${facingDirection.y}, ${facingDirection.z}");
       }
       else if (time > turnTimeStart)
       {
@@ -149,22 +184,25 @@ class Player
   
   void onForward()
   {
-    if (!isMoving && !isTurning)
+    Log.debug("onForward");
+    if (!isMoving && !isTurning && _checkMove(facingDirection))
     {
       startMoving();
-      moveEndPosition.z -= moveDistance;
+      moveEndPosition.addSelf(facingDirection);
     }
   }
   void onBack()
   {
-    if (!isMoving && !isTurning)
+    Log.debug("onBack");
+    if (!isMoving && !isTurning && _checkMove(_get180(facingDirection)))
     {
       startMoving();
-      moveEndPosition.z += moveDistance;
+      moveEndPosition.addSelf(_get180(facingDirection));
     }
   }
   void onLeft()
   {
+    Log.debug("onLeft");
     if (!isMoving && !isTurning)
     {
       turnLeft();
@@ -172,9 +210,27 @@ class Player
   }
   void onRight()
   {
+    Log.debug("onRight");
     if (!isMoving && !isTurning)
     {
       turnRight();
     }
+  }
+
+  // tells if a move is valid (non-wall cell)
+  bool _checkMove(Vector3 inDirection) {
+    Vector3 destPosition = new Vector3(position.x, position.y, position.z);
+    destPosition.addSelf(inDirection);
+    return !maze.getCell(new Point(destPosition.x.toInt(), destPosition.z.toInt()));
+  }
+  
+  // gets a new vector rotated 90deg left
+  Vector3 _get90Left(Vector3 vector) {
+    return new Vector3(vector.z, vector.y, -vector.x);
+  }
+  
+  // gets a new vector rotated 180deg
+  Vector3 _get180(Vector3 vector) {
+    return new Vector3(vector.x * -1.0, vector.y * -1.0, vector.z * -1.0);
   }
 }
