@@ -1,11 +1,11 @@
-#library('maze');
+#library('Maze');
 
 #import('dart:core');
-#import('point.dart');
+#import('Point.dart');
 
-class maze {
+class Maze {
 
-  maze(this.width, this.depth) {
+  Maze(this.width, this.depth) {
     // min 3x3 (outer walls + empty cell in middle)
     // each visitable cell has another cell of padding
     // example layout:
@@ -25,7 +25,7 @@ class maze {
     _layout = new List<bool>(width * depth);
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < depth; y++) {
-        setCell(new point(x, y), true);
+        setCell(new Point(x, y), true);
       }
     }
   }
@@ -40,7 +40,7 @@ class maze {
   static bool _randInitialized = false;
 
   // gets true/false representing solid/empty cell
-  bool getCell(point coords) {
+  bool getCell(Point coords) {
     if (coords.x < 0 || coords.x >= width) {
       throw new IndexOutOfRangeException(coords.x);
     } else if (coords.y < 0 || coords.y >= depth) {
@@ -51,7 +51,7 @@ class maze {
   }
 
   // sets solid/empty cell
-  setCell(point coords, bool wall) {
+  setCell(Point coords, bool wall) {
     if (coords.x < 0 || coords.x >= width) {
       throw new IndexOutOfRangeException(coords.x);
     } else if (coords.y < 0 || coords.y >= depth) {
@@ -63,27 +63,28 @@ class maze {
 
   // builds the maze recursively
   build() {
-    buildCell(new point(1, 1));
+    _buildCell(new Point(1, 1));
   }
 
   // builds the maze by hitting every candidate neighbor cell
-  void buildCell(point start) {
-    // if the cell is a solid wall, destroy it
-    if (getCell(start)) {
-      setCell(start, false);
+  _buildCell(Point start) {
+    setCell(start, false);
+    
+    for (Point nextVector in _getDestructibleNeighborVectors(start)) {
+      Point nextCell = start + nextVector * 2;
 
-      // traverse surrounding cells and destroy (turn solid cell to empty) where possible
-      for (point vector in _getDestructibleNeighborVectors(start)) {
+      if (getCell(nextCell)) {
+        setCell(start + nextVector, false);
+
         // destroy intermediate cell between current and next pos
-        setCell(start + vector, false);
-        buildCell(start + vector * 2);
+        _buildCell(nextCell);
       }
     }
   }
 
   // gets solid cells around the startPoint for maze building
   // walls are cleared during traversal
-  List<point> _getDestructibleNeighborVectors(point startPoint) {
+  List<Point> _getDestructibleNeighborVectors(Point startPoint) {
     // hack: initialize rng and iterate a few times for better values
     if (!_randInitialized) {
       for (int i = 0; i < new Date.now().millisecondsSinceEpoch % 1000; i++) {
@@ -93,19 +94,19 @@ class maze {
     }
 
     // array of all directions to shuffle
-    var allDirections = [new point(1, 0), new point(0, 1), new point(-1, 0), new point(0, -1)];
+    var allDirections = [new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)];
 
-    List<point> destructibleNeighborVectors = new List<point>();
+    List<Point> destructibleNeighborVectors = new List<Point>();
 
     // cull cells that have already been processed and shuffle remaining cells
     for (int i = 0; i < 4; i++) {
       int srcIdx = (Math.random() * allDirections.length).floor().toInt();
-      point posWithVecAndMagnitude = startPoint + allDirections[srcIdx] * 2;
+      Point posWithVecAndMagnitude = startPoint + allDirections[srcIdx] * 2;
       if (posWithVecAndMagnitude.x > 0
           && posWithVecAndMagnitude.x  + 1 < width
           && posWithVecAndMagnitude.y > 0
           && posWithVecAndMagnitude.y  + 1 < depth
-          && getCell(startPoint + allDirections[srcIdx] * 2)) {
+          && getCell(posWithVecAndMagnitude)) {
         destructibleNeighborVectors.add(allDirections[srcIdx]);
       }
 
