@@ -63,7 +63,7 @@ class World
     // scene
     scene = new Scene();
     scene.add(camera);
-    camera.position.setValues(0, 0, 20);
+    camera.position.setValues(0, 0, 10);
     // camera
     // camera.lookAt(origin); // WARNING BROKEN!!!
     
@@ -112,7 +112,7 @@ class World
   void update(int time)
   {
     player.update(time);
-    camera.updateProjectionMatrix();
+    // camera.updateProjectionMatrix();
   }
   
   void draw()

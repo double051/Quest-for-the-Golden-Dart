@@ -3,22 +3,42 @@
 #import("three.dart/src/ThreeD.dart");
 #import("Controls.dart");
 #import("dart:json");
+#import("dart:core");
 #import("Log.dart");
 
 class Player
 {
   static final double moveDistance = 1.0;
   static final int moveDurationMS = 250;
+  static final double turnRotation = Math.PI / 2;
+  static final int turnDurationMS = 250;
+  
+  static final int NORTH = 0;
+  static final int EAST = 1;
+  static final int SOUTH = 2;
+  static final int WEST = 3;
+  
+  int direction;
+  Vector3 directionVector;
   
   Vector3 position;
   Vector3 rotation;
   Controls controls;
   
-  bool isMoving;
+  // animation
   int timeLast;
+  
+  bool isTurning;
+  int turnTimeEnd;
+  int turnTimeStart;
+  
+  Vector3 turnStartRotation;
+  Vector3 turnEndRotation;
+  Vector3 turnDeltaVector;
+  
+  bool isMoving;
   int moveTimeEnd;
   int moveTimeStart;
-  int moveTimeLast;
   
   Vector3 moveStartPosition;
   Vector3 moveEndPosition;
@@ -26,6 +46,8 @@ class Player
   
   Player(Vector3 position, Vector3 rotation)
   {
+    this.direction = NORTH;
+    
     this.position = position;
     this.rotation = rotation;
     
@@ -33,6 +55,11 @@ class Player
     this.moveStartPosition = new Vector3(0, 0, 0);
     this.moveEndPosition = new Vector3(0, 0, 0);
     this.moveDeltaVector = new Vector3(0, 0, 0);
+    
+    this.isTurning = false;
+    this.turnEndRotation = new Vector3(0, 0, 0);
+    this.turnStartRotation = new Vector3(0, 0, 0);
+    this.turnDeltaVector = new Vector3(0, 0, 0);
     
     this.controls = new Controls();
     this.controls.forwardCallback = onForward;
@@ -42,6 +69,29 @@ class Player
     
     Log.debug("player position = ${position.x}, ${position.y}, ${position.z}");
     Log.debug("player rotation = ${rotation.x}, ${rotation.y}, ${rotation.z}");
+  }
+  
+  void startTurning()
+  {
+    isTurning = true;
+    turnStartRotation.copy(rotation);
+    turnEndRotation.copy(rotation);
+    turnTimeStart = timeLast;
+    turnTimeEnd = timeLast + turnDurationMS;
+  }
+  
+  void turnRight()
+  {
+    startTurning();
+    direction = (direction + 1)%4;
+    turnEndRotation.y += turnRotation;
+  }
+  
+  void turnLeft()
+  {
+    startTurning();
+    direction = (direction - 1)%4;
+    turnEndRotation.y -= turnRotation;
   }
   
   void startMoving()
@@ -73,8 +123,25 @@ class Player
         moveDeltaVector.sub(moveEndPosition, moveStartPosition);
         moveDeltaVector.multiplyScalar(movePercentProgress);
         position.add(moveStartPosition, moveDeltaVector);
+      }
+    }
+    if (isTurning)
+    {
+      if (time > turnTimeEnd)
+      {
+        isTurning = false;
+        rotation.copy(turnEndRotation);
+      }
+      else if (time > turnTimeStart)
+      {
+        // interpolate turn
+        int turnTimeLeft = turnTimeEnd - time;
+        double turnPercentLeft = turnTimeLeft.toDouble()/turnDurationMS.toDouble();
+        double turnPercentProgress = 1-turnPercentLeft;
         
-        moveTimeLast = time;
+        turnDeltaVector.sub(turnEndRotation, turnStartRotation);
+        turnDeltaVector.multiplyScalar(turnPercentProgress);
+        rotation.add(turnStartRotation, turnDeltaVector);
       }
     }
     timeLast = time;
@@ -82,8 +149,7 @@ class Player
   
   void onForward()
   {
-    Log.debug("onForward");
-    if (!isMoving)
+    if (!isMoving && !isTurning)
     {
       startMoving();
       moveEndPosition.z -= moveDistance;
@@ -91,8 +157,7 @@ class Player
   }
   void onBack()
   {
-    Log.debug("onBack");
-    if (!isMoving)
+    if (!isMoving && !isTurning)
     {
       startMoving();
       moveEndPosition.z += moveDistance;
@@ -100,20 +165,16 @@ class Player
   }
   void onLeft()
   {
-    Log.debug("onLeft");
-    if (!isMoving)
+    if (!isMoving && !isTurning)
     {
-      startMoving();
-      moveEndPosition.x -= moveDistance;
+      turnLeft();
     }
   }
   void onRight()
   {
-    Log.debug("onRight");
-    if (!isMoving)
+    if (!isMoving && !isTurning)
     {
-      startMoving();
-      moveEndPosition.x += moveDistance;
+      turnRight();
     }
   }
 }
