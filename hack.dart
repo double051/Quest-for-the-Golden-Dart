@@ -10,5 +10,5 @@ void main()
   
   World world = new World('#world');
   world.init();
-  world.draw();
+  world.animate(0);
 }
