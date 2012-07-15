@@ -63,17 +63,17 @@ class World
     // scene
     scene = new Scene();
     scene.add(camera);
-    camera.position.setValues(0, 0, 20);
+    camera.position.setValues(1, 0, 1);
     // camera
     // camera.lookAt(origin); // WARNING BROKEN!!!
     
     wallMeshes = new List<Mesh>();
     
-    // player
-    player = new Player(camera.position, camera.rotation);
-    
     // maze
     maze = new Maze(31, 31);
+    
+    // player
+    player = new Player(camera.position, camera.rotation, maze);
     
     initGeometry();
   }
