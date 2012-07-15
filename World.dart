@@ -77,7 +77,8 @@ class World
   {
     List materials = [];
 
-    for ( int i = 0; i < 6; i ++ ) {
+    for ( int i = 0; i < 6; i ++ )
+    {
       materials.add( new MeshBasicMaterial( { 'color' : Math.random() * 0xffffff } ) );
     }
 
@@ -90,11 +91,19 @@ class World
   void update()
   {
     player.update();
+    camera.updateProjectionMatrix();
   }
   
   void draw()
   {
-    Log.debug('Draw!');
     renderer.render(scene, camera);
+  }
+  
+  bool animate(int time)
+  {
+    window.requestAnimationFrame(animate);
+    update();
+    draw();
+    return true;
   }
 }

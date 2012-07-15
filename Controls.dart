@@ -6,10 +6,15 @@
 class Controls
 {
   // WASD and arrow key controls
-  bool forward;
-  bool back;
-  bool left;
-  bool right;
+  bool forwardDown;
+  bool backDown;
+  bool leftDown;
+  bool rightDown;
+  
+  Function forwardCallback;
+  Function backCallback;
+  Function leftCallback;
+  Function rightCallback;
   
   static final int keyW = 87;
   static final int keyA = 65;
@@ -22,10 +27,10 @@ class Controls
   
   Controls()
   {
-    this.forward = false;
-    this.back = false;
-    this.left = false;
-    this.right = false;
+    this.forwardDown = false;
+    this.backDown = false;
+    this.leftDown = false;
+    this.rightDown = false;
     
     // set listeners for keyboard events
     document.on.keyDown.add(onKeyDown);
@@ -33,29 +38,40 @@ class Controls
   }
   void onKeyDown(KeyboardEvent event)
   {
-    // Log.debug("${event.keyCode}");
     int keyDown = event.keyCode;
     switch (keyDown)
     {
       case keyW:
       case keyArrowUp:
-        Log.debug('forward down');
-        forward = true;
+        if (!forwardDown && forwardCallback != null)
+        {
+          forwardCallback();
+        }
+        forwardDown = true;
         break;
       case keyA:
       case keyArrowLeft:
-        Log.debug('left down');
-        left = true;
+        if (!leftDown && leftCallback != null)
+        {
+          leftCallback();
+        }
+        leftDown = true;
         break;
       case keyS:
       case keyArrowDown:
-        Log.debug('back down');
-        back = true;
+        if (!backDown && backCallback != null)
+        {
+          backCallback();
+        }
+        backDown = true;
         break;
       case keyD:
       case keyArrowRight:
-        Log.debug('right down');
-        right = true;
+        if (!rightDown && rightCallback != null)
+        {
+          rightCallback();
+        }
+        rightDown = true;
         break;
     }
   }
@@ -66,23 +82,19 @@ class Controls
     {
       case keyW:
       case keyArrowUp:
-        Log.debug('forward up');
-        forward = false;
+        forwardDown = false;
         break;
       case keyA:
       case keyArrowLeft:
-        Log.debug('left up');
-        left = false;
+        leftDown = false;
         break;
       case keyS:
       case keyArrowDown:
-        Log.debug('back up');
-        back = false;
+        backDown = false;
         break;
       case keyD:
       case keyArrowRight:
-        Log.debug('right up');
-        right = false;
+        rightDown = false;
         break;
     }
   }
