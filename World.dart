@@ -3,7 +3,8 @@
 #import("dart:html");
 #import("three.dart/src/ThreeD.dart");
 #import("Log.dart");
-#import("maze.dart");
+#import("Point.dart", prefix:'MPoint');
+#import("Maze.dart");
 #import("Player.dart");
 
 class World
@@ -26,9 +27,13 @@ class World
   Vector3 origin;
   Geometry dartGeometry;
   Mesh goldenDart;
+  List<Mesh> wallMeshes;
   
   // Player
   Player player;
+  
+  // Maze
+  Maze maze;
   
   World(String containerSelector)
   {
@@ -67,8 +72,13 @@ class World
     // camera
     // camera.lookAt(origin); // WARNING BROKEN!!!
     
+    wallMeshes = new List<Mesh>();
+    
     // player
     player = new Player(camera.position, camera.rotation);
+    
+    // maze
+    maze = new Maze(31, 31);
     
     initGeometry();
   }
@@ -81,10 +91,26 @@ class World
       materials.add( new MeshBasicMaterial( { 'color' : Math.random() * 0xffffff } ) );
     }
 
-    dartGeometry = new CubeGeometry(5, 5, 5, 1, 1, 1, materials);
+    dartGeometry = new CubeGeometry(1, 1, 1, 1, 1, 1, materials);
     goldenDart = new Mesh(dartGeometry, new MeshFaceMaterial());
     goldenDart.position.copy(origin);
     scene.add(goldenDart);
+    
+    // assemble maze geometry
+    maze.build();
+
+    CubeGeometry wallBlockGeometry = new CubeGeometry(1, 1, 1, 1, 1, 1, materials);
+    for (int x = 0; x < maze.width; x++) {
+      for (int y = 0; y < maze.depth; y++) {
+        if (maze.getCell(new MPoint.Point(x, y))) {
+          Mesh wallMesh = new Mesh(wallBlockGeometry, new MeshFaceMaterial());
+          wallMesh.position = new Vector3(x, 0.0, y);
+          wallMeshes.add(wallMesh);
+          
+          scene.add(wallMesh);
+        }
+      }
+    }
   }
   
   void update()
