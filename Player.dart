@@ -7,7 +7,7 @@
 
 class Player
 {
-  static final double moveDistance = 5.0;
+  static final double moveDistance = 1.0;
   static final int moveDurationMS = 250;
   
   Vector3 position;

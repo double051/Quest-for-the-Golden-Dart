@@ -14,12 +14,7 @@ class World
   Element container;
   
   // Three.dart
-  double fieldOfView = 90.0; // degrees
-  double aspectRatio;
-  double nearPlane = 1.0;
-  double farPlane = 100.0;
   PerspectiveCamera camera;
-  
   Scene scene;
   CanvasRenderer renderer;
   
@@ -62,8 +57,8 @@ class World
     container.nodes.add(renderer.domElement);
     
     // camera
-    aspectRatio = 1.0;
-    camera = new PerspectiveCamera(90.0, 1.0, 1.0, 100.0);
+    double aspectRatio = 1.0;
+    camera = new PerspectiveCamera(50.0, 1.0, 0.1, 5.0);
     
     // scene
     scene = new Scene();
