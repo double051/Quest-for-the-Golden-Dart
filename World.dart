@@ -88,9 +88,9 @@ class World
     scene.add(goldenDart);
   }
   
-  void update()
+  void update(int time)
   {
-    player.update();
+    player.update(time);
     camera.updateProjectionMatrix();
   }
   
@@ -102,7 +102,7 @@ class World
   bool animate(int time)
   {
     window.requestAnimationFrame(animate);
-    update();
+    update(time);
     draw();
     return true;
   }

@@ -7,14 +7,33 @@
 
 class Player
 {
+  static final double moveDistance = 5.0;
+  static final int moveDurationMS = 250;
+  
   Vector3 position;
   Vector3 rotation;
   Controls controls;
+  
+  bool isMoving;
+  int timeLast;
+  int moveTimeEnd;
+  int moveTimeStart;
+  int moveTimeLast;
+  
+  Vector3 moveStartPosition;
+  Vector3 moveEndPosition;
+  Vector3 moveDeltaVector;
   
   Player(Vector3 position, Vector3 rotation)
   {
     this.position = position;
     this.rotation = rotation;
+    
+    this.isMoving = false;
+    this.moveStartPosition = new Vector3(0, 0, 0);
+    this.moveEndPosition = new Vector3(0, 0, 0);
+    this.moveDeltaVector = new Vector3(0, 0, 0);
+    
     this.controls = new Controls();
     this.controls.forwardCallback = onForward;
     this.controls.backCallback = onBack;
@@ -25,29 +44,76 @@ class Player
     Log.debug("player rotation = ${rotation.x}, ${rotation.y}, ${rotation.z}");
   }
   
-  void update()
+  void startMoving()
   {
-    
+    isMoving = true;
+    moveStartPosition.copy(position);
+    moveEndPosition.copy(position);
+    moveTimeStart = timeLast;
+    moveTimeEnd = timeLast + moveDurationMS;
+  }
+  
+  void update(int time)
+  {
+    if (isMoving)
+    {
+      if (time > moveTimeEnd)
+      {
+        // stop moving
+        isMoving = false;
+        position.copy(moveEndPosition);
+      }
+      else if (time > moveTimeStart)
+      {
+        // interpolate movement
+        int moveTimeLeft = moveTimeEnd - time;
+        double movePercentLeft = moveTimeLeft.toDouble()/moveDurationMS.toDouble();
+        double movePercentProgress = 1-movePercentLeft;
+        
+        moveDeltaVector.sub(moveEndPosition, moveStartPosition);
+        moveDeltaVector.multiplyScalar(movePercentProgress);
+        position.add(moveStartPosition, moveDeltaVector);
+        
+        moveTimeLast = time;
+      }
+    }
+    timeLast = time;
   }
   
   void onForward()
   {
     Log.debug("onForward");
-    position.z -= 5;
+    if (!isMoving)
+    {
+      startMoving();
+      moveEndPosition.z -= moveDistance;
+    }
   }
   void onBack()
   {
     Log.debug("onBack");
-    position.z += 5;
+    if (!isMoving)
+    {
+      startMoving();
+      moveEndPosition.z += moveDistance;
+    }
   }
   void onLeft()
   {
     Log.debug("onLeft");
-    position.x -= 5;
+    if (!isMoving)
+    {
+      startMoving();
+      moveEndPosition.x -= moveDistance;
+    }
   }
   void onRight()
   {
     Log.debug("onRight");
-    position.x += 5;
+    if (!isMoving)
+    {
+      startMoving();
+      moveEndPosition.x += moveDistance;
+    }
   }
 }

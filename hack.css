@@ -6,6 +6,21 @@ body
   margin: 8px;
 }
 
+h1
+{
+  color: #FFD700;
+}
+
+h3
+{
+  color: #ff00ff;
+}
+
+h2
+{
+  color: #00FF00;
+}
+
 a:link
 {
   color:#7f7fff;

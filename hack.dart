@@ -10,5 +10,5 @@ void main()
   
   World world = new World('#world');
   world.init();
-  world.animate(0);
+  window.requestAnimationFrame(world.animate);
 }
