@@ -58,7 +58,7 @@ class World
     
     // camera
     double aspectRatio = 1.0;
-    camera = new PerspectiveCamera(50.0, 1.0, 0.1, 5.0);
+    camera = new PerspectiveCamera(50.0, 1.0, 0.1, 10.0);
     
     // scene
     scene = new Scene();
@@ -86,11 +86,28 @@ class World
     {
       materials.add( new MeshBasicMaterial( { 'color' : Math.random() * 0xffffff } ) );
     }
+    
+    List goldenMaterials = [];
 
-    dartGeometry = new CubeGeometry(1, 1, 1, 1, 1, 1, materials);
+    for ( int i = 0; i < 6; i ++ )
+    {
+      goldenMaterials.add( new MeshBasicMaterial( { 'color' : 0xffd700 } ) );
+    }
+    
+    dartGeometry = new CubeGeometry(0.1, 0.7, 0.1, 1, 1, 1, goldenMaterials);
     goldenDart = new Mesh(dartGeometry, new MeshFaceMaterial());
-    goldenDart.position.copy(origin);
+    goldenDart.position.setValues(1, 0, 1);
     scene.add(goldenDart);
+    
+    CubeGeometry fanGeometry = new CubeGeometry(0.4, 0.3, 0.1, 1, 1, 1, goldenMaterials);
+    Mesh goldenFan = new Mesh(fanGeometry, new MeshFaceMaterial());
+    goldenFan.position.setValues(1, 0.5, 1);
+    scene.add(goldenFan);
+    
+    fanGeometry = new CubeGeometry(0.1, 0.3, 0.4, 1, 1, 1, goldenMaterials);
+    goldenFan = new Mesh(fanGeometry, new MeshFaceMaterial());
+    goldenFan.position.setValues(1, 0.5, 1);
+    scene.add(goldenFan);
     
     // assemble maze geometry
     maze.build();
@@ -107,6 +124,15 @@ class World
         }
       }
     }
+    
+    // GOLDEN DART
+    // List goldenMaterials = [];
+    // for ( int i = 0; i < 6; i ++ )
+    // {
+    //   goldenMaterials.add( new MeshBasicMaterial( { 'color' : 0xffd700 } ) );
+    // }
+
+    
   }
   
   void update(int time)
